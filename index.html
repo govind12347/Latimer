@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer, Stopwatch, and Reps Counter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: row;
+      width: 100vw;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+    }
+
+    .left, .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .left {
+      background-color: #e6f7ff;
+    }
+
+    .right {
+      background-color: #d1f5d3;
+    }
+
+    .time {
+      font-size: 15rem;
+      text-align: center;
+      margin: 0;
+    }
+
+    .timer-label {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .buttons {
+      margin: 20px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .reps-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reps-counter {
+      font-size: 22.5rem;
+      font-weight: bold;
+      color: #2e8b57;
+      user-select: none;
+      text-align: center;
+    }
+
+    .reps-label {
+      font-size: 1.5rem;
+      margin-top: -20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="timer-label">Timer</div>
+    <div class="time" id="display">00:00</div>
+    <div class="buttons">
+      <label for="set-timer" style="font-size: 0.8rem;">Set Timer: </label>
+      <input type="text" id="set-timer" placeholder="mm:ss" style="font-size: 0.8rem; text-align: center;">
+      <button id="apply-timer">Apply Timer</button>
+      <button id="start-timer">Start Timer</button>
+      <button id="stop-timer">Stop Timer</button>
+      <button id="start-stopwatch">Start Stopwatch</button>
+      <button id="stop-stopwatch">Stop Stopwatch</button>
+      <button id="reset">Reset Timer</button>
+    </div>
+  </div>
+  <div class="right" id="reps-area">
+    <div class="reps-container">
+      <div class="reps-counter" id="reps-counter">0</div>
+      <div class="reps-label">Reps</div>
+      <button id="reset-reps" style="padding: 5px 10px; font-size: 0.8rem; margin-top: 20px; background-color: #ff4d4d;">Reset Reps</button>
+    </div>
+  </div>
+
+  <script>
+    // Timer Variables
+    let timerMinutes = 0;
+    let timerSeconds = 0;
+    let timerInterval;
+
+    // Stopwatch Variables
+    let stopwatchMinutes = 0;
+    let stopwatchSeconds = 0;
+    let stopwatchInterval;
+
+    // Reps Counter Variable
+    let repsCount = 0;
+    let timerActive = false;
+
+    // DOM Elements
+    const displayElement = document.getElementById('display');
+    const setTimerInput = document.getElementById('set-timer');
+    const repsCounterElement = document.getElementById('reps-counter');
+    const repsArea = document.getElementById('reps-area');
+
+    // Format Time Function
+    function formatTime(minutes, seconds) {
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // Timer Functions
+    document.getElementById('apply-timer').addEventListener('click', () => {
+      const [minutes, seconds] = setTimerInput.value.split(':').map(Number);
+      timerMinutes = minutes || 0;
+      timerSeconds = seconds || 0;
+      displayElement.textContent = formatTime(timerMinutes, timerSeconds);
+    });
+
+    document.getElementById('start-timer').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerActive = true;
+      timerInterval = setInterval(() => {
+        if (timerMinutes === 0 && timerSeconds === 0) {
+          clearInterval(timerInterval);
+          timerActive = false;
+          displayElement.textContent = 'Time Up!';
+        } else {
+          if (timerSeconds === 0) {
+            timerMinutes--;
+            timerSeconds = 59;
+          } else {
+            timerSeconds--;
+          }
+          displayElement.textContent = formatTime(timerMinutes, timerSeconds);
+        }
+      }, 1000);
+    });
+
+    document.getElementById('stop-timer').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerActive = false;
+    });
+
+    // Stopwatch Functions
+    document.getElementById('start-stopwatch').addEventListener('click', () => {
+      clearInterval(stopwatchInterval);
+      timerActive = true;
+      stopwatchInterval = setInterval(() => {
+        stopwatchSeconds++;
+        if (stopwatchSeconds === 60) {
+          stopwatchMinutes++;
+          stopwatchSeconds = 0;
+        }
+        displayElement.textContent = formatTime(stopwatchMinutes, stopwatchSeconds);
+      }, 1000);
+    });
+
+    document.getElementById('stop-stopwatch').addEventListener('click', () => {
+      clearInterval(stopwatchInterval);
+      timerActive = false;
+    });
+
+    document.getElementById('reset').addEventListener('click', () => {
+      clearInterval(timerInterval);
+      clearInterval(stopwatchInterval);
+      timerMinutes = 0;
+      timerSeconds = 0;
+      stopwatchMinutes = 0;
+      stopwatchSeconds = 0;
+      timerActive = false;
+      displayElement.textContent = '00:00';
+    });
+
+    // Reps Counter Function
+    function increaseReps() {
+      if (timerActive) {
+        repsCount++;
+        repsCounterElement.textContent = repsCount;
+      }
+    }
+
+    // Reset Reps Function
+    document.getElementById('reset-reps').addEventListener('click', () => {
+      repsCount = 0;
+      repsCounterElement.textContent = repsCount;
+    });
+
+    // Add Event Listeners for Spacebar or Mouse Clicks
+    repsArea.addEventListener('click', increaseReps);
+    document.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') {
+        increaseReps();
+      }
+    });
+  </script>
+</body>
+</html>
