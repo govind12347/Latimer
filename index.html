@@ -41,7 +41,7 @@
     }
 
     .time {
-      font-size: 8rem;
+      font-size: 13rem; /* Reduced timer size from 16rem to 13rem */
       text-align: center;
       margin: 10px;
     }
@@ -83,7 +83,7 @@
     }
 
     .reps-counter {
-      font-size: 10rem;
+      font-size: 16rem; /* Enlarged reps count size */
       font-weight: bold;
       color: red;
       user-select: none;
@@ -92,8 +92,23 @@
 
     .reps-label {
       font-size: 1.5rem;
-      margin-top: -15px;
+      margin-top: -10px; /* Reduced gap between counter and label */
       color: #333;
+    }
+
+    #reset-reps {
+      margin-top: 5px; /* Reduced gap between label and button */
+      padding: 5px;
+      font-size: 0.8rem;
+      background-color: #007bff; /* Blue color for reset reps button */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #reset-reps:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -116,7 +131,7 @@
     <div class="reps-container">
       <div class="reps-counter" id="reps-counter">0</div>
       <div class="reps-label">Reps</div>
-      <button id="reset-reps" style="margin-top: 10px; padding: 5px; font-size: 0.8rem; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Reset Reps</button>
+      <button id="reset-reps">Reset Reps</button>
     </div>
   </div>
 
